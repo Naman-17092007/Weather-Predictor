@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="container">
+        <header>
+            <h1><i class="fa-solid fa-cloud-sun"></i> Weather Forecast</h1>
+            <p>Enter a city name to get real-time weather and a 7-day forecast.</p>
+        </header>
+
+        <form method="POST" class="search-form">
+            <div class="input-group">
+                <i class="fa-solid fa-location-dot"></i>
+                <input type="text" name="city" placeholder="e.g. London, Tokyo, New York" required autocomplete="off">
+            </div>
+            <button type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        </form>
+
+        {% if error %}
+            <div class="error-message">
+                <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+            </div>
+        {% endif %}
+
+        {% if weather %}
+            <div class="weather-dashboard">
+                <div class="current-weather glass-card">
+                    <div class="location-header">
+                        <h2>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h2>
+                        <span class="update-time">Updated: {{ weather.current.time | replace('T', ' ') }}</span>
+                    </div>
+                    
+                    <div class="current-details">
+                        <div class="temp-display">
+                            <span class="temp-value">{{ weather.current.temperature }}</span>
+                            <span class="temp-unit">°C</span>
+                        </div>
+                        <div class="condition">
+                            <h3>{{ weather.current.description }}</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <i class="fa-solid fa-wind"></i>
+                            <div>
+                                <span class="metric-label">Wind Speed</span>
+                                <span class="metric-value">{{ weather.current.windspeed }} km/h</span>
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <i class="fa-regular fa-compass"></i>
+                            <div>
+                                <span class="metric-label">Wind Direction</span>
+                                <span class="metric-value">{{ weather.current.winddirection }}°</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forecast-section glass-card">
+                    <h3>7-Day Forecast</h3>
+                    <div class="forecast-grid">
+                        {% for day in weather.forecast %}
+                            <div class="forecast-card">
+                                <div class="date">{{ day.date }}</div>
+                                <div class="condition-text">{{ day.condition }}</div>
+                                <div class="temp-range">
+                                    <span class="max-temp"><i class="fa-solid fa-arrow-up"></i> {{ day.max_temp }}°</span>
+                                    <span class="min-temp"><i class="fa-solid fa-arrow-down"></i> {{ day.min_temp }}°</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
